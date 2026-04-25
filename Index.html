@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompt Architect</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --bg: #f1f5f9;
+            --text: #1e293b;
+            --optional: #64748b;
+        }
+
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 { margin: 0 0 4px 0; font-size: 1.4rem; color: #111; text-align: center; }
+        p.subtitle { margin: 0 0 20px 0; font-size: 0.85rem; color: #64748b; text-align: center; }
+
+        .input-group { margin-bottom: 14px; }
+        
+        label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 5px; 
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .optional-tag {
+            font-weight: normal;
+            color: var(--optional);
+            text-transform: none;
+            font-size: 0.7rem;
+            float: right;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px; 
+            background: #fff;
+        }
+
+        textarea { height: 60px; resize: none; }
+        .short-input { height: 44px; }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #output-area {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            display: none;
+        }
+
+        #final-prompt { 
+            font-size: 0.9rem; 
+            line-height: 1.5; 
+            color: #334155;
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .copy-btn { background-color: var(--success); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Prompt Architect</h2>
+    <p class="subtitle">Build precise prompts for Gemini</p>
+    
+    <div class="input-group">
+        <label>Persona / Role</label>
+        <input type="text" id="role" class="short-input" placeholder="e.g., Clinical Educator">
+    </div>
+
+    <div class="input-group">
+        <label>Context / Background</label>
+        <textarea id="context" placeholder="What is the current situation?"></textarea>
+    </div>
+
+    <div class="input-group">
+        <label>The Task</label>
+        <textarea id="task" placeholder="What do you want to achieve?"></textarea>
+    </div>
+
+    <div class="input-group">
+        <label>Target Audience <span class="optional-tag">(Optional)</span></label>
+        <input type="text" id="audience" class="short-input" placeholder="e.g., Medical Interns, Tech-savvy users">
+    </div>
+
+    <div class="input-group">
+        <label>Output Format <span class="optional-tag">(Optional)</span></label>
+        <input type="text" id="format" class="short-input" placeholder="e.g., Markdown table, Bullet points, JSON">
+    </div>
+
+    <div class="input-group">
+        <label>Constraints</label>
+        <input type="text" id="constraints" class="short-input" placeholder="e.g., Concise, No jargon">
+    </div>
+
+    <button onclick="generatePrompt()">Generate Prompt</button>
+
+    <div id="output-area">
+        <label style="color: var(--primary)">Result:</label>
+        <div id="final-prompt"></div>
+        <button class="copy-btn" onclick="copyPrompt()">Copy to Clipboard</button>
+    </div>
+</div>
+
+<script>
+    function generatePrompt() {
+        const role = document.getElementById('role').value || "Helpful AI";
+        const context = document.getElementById('context').value || "General request";
+        const task = document.getElementById('task').value || "Provide assistance";
+        const audience = document.getElementById('audience').value;
+        const format = document.getElementById('format').value;
+        const constraints = document.getElementById('constraints').value || "None";
+        
+        let fullPrompt = `**ROLE:** ${role}\n**CONTEXT:** ${context}\n**TASK:** ${task}`;
+        
+        if (audience) fullPrompt += `\n**AUDIENCE:** ${audience}`;
+        if (format) fullPrompt += `\n**FORMAT:** ${format}`;
+        
+        fullPrompt += `\n**CONSTRAINTS:** ${constraints}`;
+        
+        document.getElementById('final-prompt').innerText = fullPrompt;
+        document.getElementById('output-area').style.display = 'block';
+        
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function copyPrompt() {
+        const text = document.getElementById('final-prompt').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            btn.innerText = "✓ Copied!";
+            setTimeout(() => { btn.innerText = "Copy to Clipboard"; }, 2000);
+        });
+    }
+</script>
+
+</body>
+</html>
